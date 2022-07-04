@@ -23,7 +23,7 @@ class ViewModel @Inject constructor(private val repository: Repository) : ViewMo
         getPeopleLists()
         getRoomLists()
     }
-    private fun getPeopleLists() {
+    fun getPeopleLists() {
        viewModelScope.launch {
             repository.fetchPeople().collect {
                 _peopleList.postValue(it)

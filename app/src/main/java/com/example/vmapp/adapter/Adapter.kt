@@ -9,6 +9,7 @@ import com.example.vmapp.databinding.PeopleListBinding
 import com.example.vmapp.databinding.RoomsListBinding
 import com.example.vmapp.model.people.PeopleItem
 import com.example.vmapp.model.rooms.RoomsItem
+import java.text.DateFormat
 
 const val PEOPLE = 0
 const val ROOMS = 1
