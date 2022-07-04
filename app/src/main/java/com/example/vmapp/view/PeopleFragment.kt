@@ -1,32 +1,27 @@
 package com.example.vmapp.view
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProvider
 import com.example.vmapp.adapter.RecyclerViewAdapter
 import com.example.vmapp.databinding.FragmentPeopleBinding
-import com.example.vmapp.repository.RepositoryImp
-import com.example.vmapp.viewmodel.ViewModel
+import com.example.vmapp.model.people.PeopleItem
+import com.example.vmapp.util.UIState
+import com.example.vmapp.viewmodel.FragmentsViewModel
 
 
-class PeopleFragment : Fragment() {
 
-    private val adapter: RecyclerViewAdapter by lazy{
-        RecyclerViewAdapter()
-    }
 
-    private var _binding: FragmentPeopleBinding? = null
-    private val binding: FragmentPeopleBinding get()= _binding!!
 
-    private val viewModel: ViewModel by lazy{
-        object : ViewModelProvider.Factory{
-            override fun <T : androidx.lifecycle.ViewModel?> create(modelClass: Class<T>): T {
-                return ViewModel(RepositoryImp()) as T
-            }
-        }.create(ViewModel::class.java)
+class PeopleFragment : FragmentsViewModel() {
+
+
+
+lateinit var  peopleAdapter: RecyclerViewAdapter
+
+ private val binding : FragmentPeopleBinding by lazy{
+        FragmentPeopleBinding.inflate(layoutInflater)
     }
 
 
@@ -34,25 +29,34 @@ class PeopleFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentPeopleBinding.inflate(layoutInflater)
-
-        setListPeople()
-        observePeople()
-
-        viewModel.getPeopleLists()
-
+        peopleAdapter = RecyclerViewAdapter()
+        binding.rvPeople.adapter = peopleAdapter
+        configureObserver()
         return binding.root
     }
+    private fun configureObserver() {
+        viewModel.peopleList.observe(viewLifecycleOwner) { state ->
 
-    private fun observePeople() {
-        viewModel.peopleList.observe(viewLifecycleOwner){
-            adapter.setPeopleLists(it)
+            when (state) {
+                is UIState.Success<*> -> {
+                    binding.apply {
+                        progress.visibility = View.GONE
+
+                        val people = state.response
+
+                        peopleAdapter.setLists(people as List<PeopleItem>)
+
+                    }
+                }
+                is UIState.Error -> {
+                    binding.apply {
+                        progress.visibility = View.GONE
+                        tvError.text = state.exception.message
+                    }
+                }
+                else -> {}
+            }
         }
-    }
-
-    private fun setListPeople() {
-        binding.rvPeople.setHasFixedSize(true)
-        binding.rvPeople.adapter = adapter
     }
 
 }

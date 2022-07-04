@@ -1,5 +1,6 @@
 package com.example.vmapp.adapter
 
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -17,19 +18,7 @@ class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var mPeople: MutableList<PeopleItem> = mutableListOf()
     private var mRooms: MutableList<RoomsItem> = mutableListOf()
 
-    fun setPeopleLists(list: List<PeopleItem>) {
-        mPeople.clear()
-        mPeople.addAll(list)
-        notifyDataSetChanged()
-    }
-
-    fun setRoomList(list: List<RoomsItem>) {
-        mRooms.clear()
-        mRooms.addAll(list)
-        notifyDataSetChanged()
-    }
-
-    inner class PeopleViewHolder(private val binding: PeopleListBinding) :
+    inner class PeopleViewHolder(private val binding: PeopleListBinding ) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(peopleItem: PeopleItem) {
             Glide.with(binding.ivImage).load(peopleItem.avatar).into(binding.ivImage)
@@ -41,13 +30,12 @@ class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     inner class RoomViewHolder(private val binding: RoomsListBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(rooms: RoomsItem) {
-            val text = rooms.isOccupied
-            var data :String?=  rooms.createdAt
+            val occupancy = rooms.is_occupied
             binding.apply {
-                tvCreatedAt.text = data!!.substring(0,10)
-                tvOcupancy.text = rooms.maxOccupancy.toString()
+                tvOcupancy.text = rooms.max_occupancy.toString()
                 tvRoomId.text = rooms.id
-                if(text == true){
+                tvCreatedAt.text = rooms.created_at
+                if(occupancy){
                     tvOccupied.text = "Occupied"
                 }else{
                     tvOccupied.text = "UnOccupied"
@@ -57,10 +45,10 @@ class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int):RecyclerView.ViewHolder {
 
         if (viewType == PEOPLE) {
-            return  PeopleViewHolder(
+          return  PeopleViewHolder(
                 PeopleListBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -69,7 +57,7 @@ class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             )
         }
         if (viewType == ROOMS) {
-            return RoomViewHolder(
+           return RoomViewHolder(
                 RoomsListBinding.inflate(
                     LayoutInflater.from(parent.context),
                     parent,
@@ -77,19 +65,19 @@ class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 )
             )
         }
-        return      PeopleViewHolder(
-            PeopleListBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
+       return      PeopleViewHolder(
+           PeopleListBinding.inflate(
+               LayoutInflater.from(parent.context),
+               parent,
+               false
+           )
+       )
     }
 
     override fun getItemViewType(position: Int): Int {
-        if(position <mPeople.size){
-            return PEOPLE
-        }
+     if(position <mPeople.size){
+         return PEOPLE
+     }
         if(position - mPeople.size <mRooms.size){
             return ROOMS
         }
@@ -109,6 +97,19 @@ class RecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         if(holder is RoomViewHolder){
             holder.bind(mRooms[position])
         }
+    }
+
+
+    fun setLists(list: List<PeopleItem>) {
+        mPeople.clear()
+        mPeople.addAll(list)
+        notifyDataSetChanged()
+    }
+
+    fun setRoomList(list: List<RoomsItem>) {
+        mRooms.clear()
+        mRooms.addAll(list)
+        notifyDataSetChanged()
     }
 
 }

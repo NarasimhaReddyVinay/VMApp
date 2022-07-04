@@ -3,35 +3,41 @@ package com.example.vmapp.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.vmapp.model.people.PeopleItem
-import com.example.vmapp.model.rooms.RoomsItem
+import androidx.lifecycle.viewModelScope
 import com.example.vmapp.repository.Repository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.example.vmapp.util.UIState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ViewModel(val repository: Repository) : ViewModel() {
+@HiltViewModel
+class ViewModel @Inject constructor(private val repository: Repository) : ViewModel() {
 
-    private val _peopleList = MutableLiveData<ArrayList<PeopleItem>>()
-    val peopleList: MutableLiveData<ArrayList<PeopleItem>> get() = _peopleList
+    private val _peopleList = MutableLiveData<UIState>()
+    val peopleList: LiveData<UIState> get() = _peopleList
 
-    private val _roomsLists : MutableLiveData<ArrayList<RoomsItem>> = MutableLiveData()
-    val roomsLists : LiveData<ArrayList<RoomsItem>> get() = _roomsLists
+    private val _roomsLists :MutableLiveData<UIState> = MutableLiveData()
+    val roomsLists : LiveData<UIState> get() = _roomsLists
 
-
-    fun getRoomLists() {
-        CoroutineScope(Dispatchers.Main).launch {
-            val response = repository.fetchRoomsDetails()
-            _roomsLists.postValue(response.rooms as ArrayList<RoomsItem>?)
+    init {
+        getPeopleLists()
+        getRoomLists()
+    }
+    private fun getPeopleLists() {
+       viewModelScope.launch {
+            repository.fetchPeople().collect {
+                _peopleList.postValue(it)
+            }
         }
+
     }
 
-    fun getPeopleLists() {
-        CoroutineScope(Dispatchers.Main).launch{
-            val response = repository.fetchPeople()
-            _peopleList.postValue(response.people as ArrayList<PeopleItem>?)
+  private  fun getRoomLists(){
+        viewModelScope.launch {
+            repository.fetchRooms().collect{
+                _roomsLists.postValue(it)
+            }
         }
-
     }
-
 }
+
