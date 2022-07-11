@@ -10,6 +10,7 @@ import com.example.vmapp.view.RoomsFragment
 class ViewPagerAdapter(private val context: Context, fm: FragmentManager): FragmentPagerAdapter(fm) {
 
     private val TAB_TITLTES= arrayListOf(R.string.People,R.string.Rooms)
+
     override fun getCount(): Int {
         return 2
     }

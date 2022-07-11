@@ -14,5 +14,4 @@ interface ApiService {
     @GET("v1/rooms")
     suspend fun getRoom(): Response<List<RoomsItem>>
 
-
 }

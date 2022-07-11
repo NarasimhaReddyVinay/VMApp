@@ -11,12 +11,7 @@ import com.example.vmapp.util.UIState
 import com.example.vmapp.viewmodel.FragmentsViewModel
 
 
-
-
-
 class PeopleFragment : FragmentsViewModel() {
-
-
 
 lateinit var  peopleAdapter: RecyclerViewAdapter
 

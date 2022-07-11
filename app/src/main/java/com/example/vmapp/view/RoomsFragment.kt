@@ -41,7 +41,6 @@ class RoomsFragment : FragmentsViewModel() {
                         RoomProgressbar.visibility = View.GONE
 
                         val rooms = state.response
-                        //recyclerViewAdapter.setRoomList(rooms as List<RoomsModelItem>)
                         recyclerViewAdapter.setRoomList(rooms as List<RoomsItem>)
 
                     }
